@@ -145,11 +145,7 @@ class WoocommerceAdGalery {
 								$image = get_the_post_thumbnail( $post->ID, apply_filters( 'single_product_large_thumbnail_size', 'shop_single' ) );
 								$image_title = esc_attr( get_the_title( get_post_thumbnail_id() ) );
 								$image_link = wp_get_attachment_url( get_post_thumbnail_id() );
-								if ( $attachment_count != 1 ) {
-									$gallery = '[product-gallery]';
-								} else {
-									$gallery = '';
-								}
+								
 								echo '<li class="ad-thumb-list-li"><a itemprop="image" href='.$image_link.' >';
 								echo $image;
 								echo '</a></li>';

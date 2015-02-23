@@ -1,18 +1,15 @@
-﻿<?php
+<?php
 /*
 Plugin Name: WooCommerce Ad-Gallery
 Plugin URI: 
 Description: WooCommerce custom plugin for replacing LightBox by Ad-Gallery
 Author: Samuel Boutron
-Author URI: sboutron.net
+Author URI: samuel.boutron@gmail.com
 Version: 1.1.382020
  
 	Copyright: © 2012 Samuel Boutron
 	License: GNU General Public License v3.0
 	License URI: http://www.gnu.org/licenses/gpl-3.0.html
-	
-	changelog (tested on WP 3.8 and woocommerce 2.0.20) :
-	- removed : specific bundle product display to make it more unrelated to 3rd party extension
 */
 
 // Exit if accessed directly
@@ -43,31 +40,43 @@ class WoocommerceAdGalery {
 		//add_action('woocommerce_product_thumbnails',	 array($this, 'product_adgallery'), 26, 2);
 		add_action('woocommerce_before_single_product_summary',	 array($this, 'product_adgallery'), 26, 2);
 		add_action('wp_enqueue_scripts', array($this, 'ad_gallery_call')); // For use on the Front end (ie. Theme)
-		
-		add_filter( 'woocommerce_general_settings', array($this, 'add_adgallery_setting') );
+		add_filter( 'woocommerce_get_settings_products', array($this, 'add_adgallery_setting'), 10, 2 );
+
 	}
 	
-	function add_adgallery_setting($settings) {
-		//$settings = get_settings();
-		$updated_settings = array();
-		foreach ( $settings as $section ) {
-			// After Scripts \ LightBox settings
-			if ( isset( $section['id'] ) && 'script_styling_options' == $section['id'] &&
-					isset( $section['type'] ) && 'sectionend' == $section['type'] ) {
-				$updated_settings[] = array(
-					'title' => __( 'AdGallery', 'woocommerce' ),
-					'desc' 	=> __( 'Enable Ad-gallery', 'woocommerce' ),
-					'id' 		=> 'woocommerce_enable_adgallery',
-					'default'	=> 'yes',
-					'desc_tip'	=> __( 'Include Ad-Gallery. Product gallery images will use Ad-Gallery', 'woocommerce' ),
-					'type' 		=> 'checkbox',
-					'checkboxgroup'		=> 'start'
-				);
+	function add_adgallery_setting( $settings, $current_section ) {
+		/**
+		 * Check the current section is what we want
+		 **/
+		if ( $current_section == 'display' ) {
+			$updated_settings = array();
+			foreach ( $settings as $section ) {
+				// After Scripts \ LightBox settings
+				if ( isset( $section['type'] ) && 'sectionend' == $section['type'] && $section['id']=='image_options' ) {
+					$updated_settings[] = array(
+						'title' => __( 'AdGallery', 'woocommerce' ),
+						'desc' 	=> __( 'Enable Ad-gallery', 'woocommerce' ),
+						'id' 		=> 'woocommerce_enable_adgallery',
+						'default'	=> 'yes',
+						'desc_tip'	=> __( 'Include Ad-Gallery. Product gallery images will use Ad-Gallery', 'woocommerce' ),
+						'type' 		=> 'checkbox',
+						'checkboxgroup'		=> 'start'
+					);
+					
+				}
+				$updated_settings[] = $section;
 			}
-			$updated_settings[] = $section;
+			return $updated_settings;
+		
+		/**
+		 * If not, return the standard settings
+		 **/
+		} else {
+			return $settings;
 		}
-		return $updated_settings;
+
 	}
+
 		
 	/**
 	* enqueue ad-Gallery
@@ -106,7 +115,7 @@ class WoocommerceAdGalery {
 
 		<?php
 		$javascript = ob_get_clean();
-		$woocommerce->add_inline_js( $javascript );		
+		wc_enqueue_js( $javascript );		
 		?>
 		
 		<div id="container">

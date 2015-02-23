@@ -1,10 +1,10 @@
-<?php
+﻿<?php
 /*
 Plugin Name: WooCommerce Ad-Gallery
 Plugin URI: 
 Description: WooCommerce custom plugin for replacing LightBox by Ad-Gallery
 Author: Samuel Boutron
-Author URI: samuel.boutron@gmail.com
+Author URI: sboutron.net
 Version: 1.1.382020
  
 	Copyright: © 2012 Samuel Boutron
@@ -180,11 +180,11 @@ class WoocommerceAdGalery {
 	 * Run every time since the activation hook is not executed when updating a plugin
 	 */
 	private function install() {
-		if(get_option('woocommerce_bundle_product') != WoocommerceAdGalery::VERSION) {
+		if(get_option('woocommerce_adgallery') != WoocommerceAdGalery::VERSION) {
 			$this->upgrade();
 			
 			// new version number
-			update_option('woocommerce_bundle_product', WoocommerceAdGalery::VERSION);
+			update_option('woocommerce_adgallery', WoocommerceAdGalery::VERSION);
 		}
 	}
 	
@@ -210,18 +210,18 @@ class WoocommerceAdGalery {
 		}
 		
 		// set version number
-		update_option('woocommerce_bundle_product', WoocommerceAdGalery::VERSION);
+		update_option('woocommerce_adgallery', WoocommerceAdGalery::VERSION);
 	}
 }
 
 /**
  * instantiate class
  */
-$woocommerce_bundle_product = new WoocommerceAdGalery();
+$woocommerce_adgallery = new WoocommerceAdGalery();
 
 } // class exists check
 
 /**
  * run the plugin activation hook
  */
-register_activation_hook(__FILE__, array('WoocommerceBundleProduct', 'on_activation'));
+register_activation_hook(__FILE__, array('WoocommerceAdGallery', 'on_activation'));
